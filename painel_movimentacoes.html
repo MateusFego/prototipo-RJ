@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movimentações - RJ Peças</title>
+    <link rel="stylesheet" href="movimentacoes.css">
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <nav class="top-nav">
+            <div class="brand">
+                <img src="assets/logoRj.jpeg" alt="Logo">
+                <strong>RJ - Peças Agrícolas</strong>
+            </div>
+            <div class="user">
+                Talita Marques (Administrador) 
+                <a href="index.html" class="logout-link">Sair</a>
+            </div>
+        </nav>
+
+        <div class="tabs-bar">
+            <div class="tab-item" onclick="window.location.href='painel_admin.html'">📊 Métricas</div>
+            <div class="tab-item" onclick="window.location.href='painel_estoque.html'">📦 Estoque</div>
+            <div class="tab-item active" onclick="window.location.href='painel_movimentacoes.html'">📝 Movimentações</div>
+            <div class="tab-item" onclick="window.location.href='painel_clientes.html'">👥 Clientes</div>
+            <div class="tab-item" onclick="window.location.href='painel_servicos.html'">⚙️ Serviços</div>
+        </div>
+
+        <main class="main-content">
+            <div class="inventory-card">
+                <div class="inventory-header">
+                    <h2>Movimentações de Estoque</h2>
+                    <button class="btn-add" onclick="abrirModalMov()">+ Nova Movimentação</button>
+                </div>
+
+                <div class="filters-container">
+                    <button class="btn-filter active" onclick="filtrar('Todas')">Todas</button>
+                    <button class="btn-filter" onclick="filtrar('Entrada')">Entradas</button>
+                    <button class="btn-filter" onclick="filtrar('Saída')">Saídas</button>
+                </div>
+
+                <table id="tabelaMovimentacoes">
+                    <thead>
+                        <tr>
+                            <th>DATA/HORA</th>
+                            <th>ITEM</th>
+                            <th>TIPO</th>
+                            <th>QUANTIDADE</th>
+                            <th>DESTINO</th> 
+                            <th>RESPONSÁVEL</th> 
+                            <th>AÇÕES</th>
+                        </tr>
+                    </thead>
+                    <tbody id="corpoMovimentacoes">
+                        </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <div id="modalMovimentacao" class="modal">
+        <div class="modal-content">
+            <h2>Nova Movimentação</h2>
+            <form id="formMovimento" onsubmit="registrarMovimentacao(event)">
+                <div class="input-group">
+                    <label>Tipo *</label>
+                    <select id="tipoMov" onchange="toggleCliente()" required>
+                        <option value="Entrada">Entrada</option>
+                        <option value="Saída">Saída</option>
+                    </select>
+                </div>
+
+                <div id="groupCliente" class="input-group" style="display: none;">
+                    <label>Cliente (Destino) *</label>
+                    <select id="clienteMov">
+                        <option value="" disabled selected>Selecione o cliente...</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Item *</label>
+                    <select id="itemMov" required>
+                        <option value="" disabled selected>Selecione um item do estoque...</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Quantidade *</label>
+                    <input type="number" id="qtdMov" value="0" min="1" required>
+                </div>
+                <div class="input-group">
+                    <label>Observação</label>
+                    <textarea id="obsMov" rows="3" placeholder="Ex: Venda para cliente X ou Reposição"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="fecharModalMov()">Cancelar</button>
+                    <button type="submit" class="btn-save">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modalDetalhes" class="modal">
+        <div class="modal-content" style="max-width: 450px;">
+            <h2>Detalhes da Movimentação</h2>
+            <div id="conteudoDetalhes" style="margin-bottom: 20px; line-height: 1.6;">
+                </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-save" onclick="fecharModalDetalhes()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="movimentacoes-logic.js"></script>
+</body>
+</html>

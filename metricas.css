@@ -1,0 +1,186 @@
+/* dashboard.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background-color: #f1f5f9;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Proíbe o scroll da página */
+}
+
+/* Barra Superior */
+.top-nav {
+    height: 60px;
+    background: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+    border-bottom: 1px solid #e2e8f0;
+    flex-shrink: 0;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+/* Barra de Abas */
+.tabs-bar {
+    height: 50px;
+    background: #ffffff;
+    display: flex;
+    padding: 0 2rem;
+    gap: 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+    flex-shrink: 0;
+}
+
+.tab-item {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #64748b;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+}
+
+.tab-item.active {
+    color: #2563eb;
+    border-bottom-color: #2563eb;
+}
+
+/* Área dos Gráficos - Grade 2x2 */
+.main-content {
+    flex-grow: 1;
+    padding: 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Duas colunas */
+    grid-template-rows: 1fr 1fr;    /* Duas linhas */
+    gap: 1.5rem;
+    min-height: 0; /* Essencial para o grid não estourar */
+}
+
+.chart-card {
+    background: #ffffff;
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    min-height: 0; /* Trava o card */
+}
+
+.chart-card h4 {
+    font-size: 0.85rem;
+    color: #475569;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Container do Canvas - A "jaula" do Chart.js */
+.canvas-container {
+    flex-grow: 1;
+    position: relative;
+    width: 100%;
+    min-height: 0;
+}
+
+.btn-sair {
+    padding: 0.5rem 1rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.5rem;
+    background: white;
+    cursor: pointer;
+    font-weight: 600;
+}
+/* Ajuste na logo e nome da empresa */
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand img {
+    height: 45px; /* Tamanho proporcional ao Figma */
+    width: auto;
+    object-fit: contain;
+}
+
+.brand strong {
+    font-size: 1.1rem;
+    color: #1e293b;
+    letter-spacing: -0.01em;
+}
+
+/* Ajuste no seletor de unidades do modal */
+select#unidadeItem {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1em;
+}
+.tab-item {
+    cursor: pointer; /* Faz aparecer a "mãozinha" do mouse */
+    user-select: none; /* Impede de ficar selecionando o texto sem querer */
+}
+
+.tab-item:hover {
+    color: #2563eb; /* Muda a cor ao passar o mouse */
+    background-color: #f8fafc; /* Dá um destaque leve */
+}
+/* --- Ajuste Premium das Abas --- */
+.tabs-bar {
+    height: 50px;
+    background: #ffffff;
+    display: flex;
+    padding: 0 2rem;
+    gap: 10px; /* Espaço entre as abas */
+    border-bottom: 1px solid #e2e8f0;
+    flex-shrink: 0;
+}
+
+.tab-item {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-bottom: 3px solid transparent; /* Reserva o espaço para o traço azul */
+    border-radius: 8px 8px 0 0; /* Arredonda só em cima para não ficar um quadrado bruto */
+}
+
+/* Hover: Efeito sutil ao passar o mouse */
+.tab-item:hover {
+    color: #2563eb;
+    background-color: #f1f5f9; /* Um cinza azulado bem leve */
+}
+
+/* Active: Onde você está agora */
+.tab-item.active {
+    color: #2563eb;
+    font-weight: 700;
+    border-bottom: 3px solid #2563eb; /* Linha azul embaixo igual ao Figma */
+    background-color: rgba(37, 99, 235, 0.05); /* Fundo azulado quase invisível */
+}

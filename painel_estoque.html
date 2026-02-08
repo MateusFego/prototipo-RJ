@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Estoque - RJ Peças</title>
+    <link rel="stylesheet" href="estoque.css">
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <nav class="top-nav">
+            <div class="brand">
+                <img src="assets/logoRj.jpeg" alt="Logo" style="height: 45px;">
+                <strong>RJ - Peças Agrícolas</strong>
+            </div>
+            <div class="user">Talita Marques (Administrador) <a href="index.html" style="margin-left:10px">Sair</a></div>
+        </nav>
+
+        <div class="tabs-bar">
+            <div class="tab-item" onclick="window.location.href='painel_admin.html'">📊 Métricas</div>
+            <div class="tab-item active" onclick="window.location.href='painel_estoque.html'">📦 Estoque</div>
+            <div class="tab-item" onclick="window.location.href='painel_movimentacoes.html'">📝 Movimentações</div>
+            <div class="tab-item" onclick="window.location.href='painel_clientes.html'">👥 Clientes</div>
+            <div class="tab-item" onclick="window.location.href='painel_servicos.html'">⚙️ Serviços</div>
+        </div>
+
+        <main class="main-content">
+            <div class="inventory-card">
+                <div class="inventory-header">
+                    <h2>Gerenciamento de Estoque</h2>
+                    <button class="btn-add" onclick="abrirModal()">+ Adicionar Item</button>
+                </div>
+
+                <input type="text" id="searchInput" class="search-box" placeholder="Pesquisar por nome ou descrição..." onkeyup="filtrarEstoque()">
+
+                <table id="tabelaEstoque">
+                    <thead>
+                        <tr>
+                            <th>NOME</th>
+                            <th>DESCRIÇÃO</th>
+                            <th>QUANTIDADE</th>
+                            <th>LOCALIZAÇÃO</th>
+                            <th>AÇÕES</th>
+                        </tr>
+                    </thead>
+                    <tbody id="corpoTabela">
+                        </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <div id="modalEstoque" class="modal">
+        <div class="modal-content">
+            <h2 id="tituloModal">Novo Item</h2>
+            <form id="formEstoque" onsubmit="salvarItem(event)"> <div class="input-group">
+                    <label>Nome *</label>
+                    <input type="text" id="nomeItem" required>
+                </div>
+                <div class="input-group">
+                    <label>Descrição</label>
+                    <textarea id="descItem" rows="3"></textarea>
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <div class="input-group" style="flex:1">
+                        <label>Quantidade *</label>
+                        <input type="number" id="qtdItem" value="0" required>
+                    </div>
+                    <div class="input-group" style="flex:1">
+                        <label>Unidade *</label>
+                        <select id="unidadeItem" required>
+                            <option value="" disabled selected>Selecione</option>
+                            <option value="un">Unidade (un)</option>
+                            <option value="ch">Chapa</option>
+                            <option value="kg">Quilograma (kg)</option>
+                            <option value="t">Tonelada (t)</option>
+                            <option value="m">Metro (m)</option>
+                            <option value="br">Barra</option>
+                            <option value="pr">Par</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Localização</label>
+                    <input type="text" id="locItem" placeholder="Ex: Prateleira A3">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="fecharModal()">Cancelar</button>
+                    <button type="submit" class="btn-save">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="estoque-logic.js"></script>
+</body>
+</html>
