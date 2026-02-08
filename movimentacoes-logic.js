@@ -7,10 +7,13 @@ let indexEdicao = null;
 let filtroAtual = 'Todas'; // Armazena o estado do filtro
 
 /**
- * Renderiza a tabela principal
+ * Renderiza a tabela principal sincronizada com o Storage
  */
 function renderizarMovimentacoes() {
-    filtrar(filtroAtual); // Aplica o filtro atual ao renderizar
+    // Sincroniza dados antes de renderizar para garantir valores numéricos reais
+    estoque = JSON.parse(localStorage.getItem('estoque_rj')) || [];
+    historico = JSON.parse(localStorage.getItem('historico_rj')) || [];
+    filtrar(filtroAtual); 
 }
 
 /**
@@ -23,7 +26,6 @@ function filtrar(tipo) {
     const botoes = document.querySelectorAll('.btn-filter');
     botoes.forEach(btn => {
         btn.classList.remove('active');
-        // Compara o texto do botão com o tipo selecionado
         if (btn.innerText === tipo || (tipo === 'Entrada' && btn.innerText === 'Entradas') || (tipo === 'Saída' && btn.innerText === 'Saídas')) {
             btn.classList.add('active');
         }
@@ -35,7 +37,7 @@ function filtrar(tipo) {
         dadosParaExibir = historico.filter(m => m.tipo === tipo.toUpperCase());
     }
 
-    // 3. Renderiza a tabela com os dados filtrados
+    // 3. Renderiza a tabela
     const corpo = document.getElementById('corpoMovimentacoes');
     if (!corpo) return;
 
@@ -47,7 +49,6 @@ function filtrar(tipo) {
     const logs = [...dadosParaExibir].reverse();
 
     corpo.innerHTML = logs.map((mov) => {
-        // Encontra o index real no histórico original para ações de editar/excluir
         const realIndex = historico.findIndex(h => h.data === mov.data && h.item === mov.item);
         
         return `
@@ -70,35 +71,53 @@ function filtrar(tipo) {
 }
 
 /**
- * Registro e Edição
+ * Registro e Edição com Correção Numérica Explicita
  */
 function registrarMovimentacao(e) {
     e.preventDefault();
 
+    // Sincroniza estoque atual antes de calcular
+    estoque = JSON.parse(localStorage.getItem('estoque_rj')) || [];
+
     const nomeItem = document.getElementById('itemMov').value;
     const tipo = document.getElementById('tipoMov').value;
-    const qtdNova = parseInt(document.getElementById('qtdMov').value);
+    
+    // CORREÇÃO: Converte explicitamente para Number para evitar concatenação (12001200)
+    const qtdNova = Number(document.getElementById('qtdMov').value);
+    
     const cliente = tipo === 'Saída' ? document.getElementById('clienteMov').value : '---';
     const observacao = document.getElementById('obsMov').value;
 
     const idxEstoque = estoque.findIndex(i => i.nome === nomeItem);
 
+    // 1. Estorno da movimentação antiga se for edição
     if (indexEdicao !== null) {
         const movAntiga = historico[indexEdicao];
         if (idxEstoque !== -1) {
-            if (movAntiga.tipo === "ENTRADA") estoque[idxEstoque].quantidade -= movAntiga.quantidade;
-            else estoque[idxEstoque].quantidade += movAntiga.quantidade;
+            // Converte valores do estoque para Number para garantir segurança matemática
+            let qtdAtualNoEstoque = Number(estoque[idxEstoque].quantidade);
+            let qtdAntigaMovida = Number(movAntiga.quantidade);
+
+            if (movAntiga.tipo === "ENTRADA") {
+                estoque[idxEstoque].quantidade = qtdAtualNoEstoque - qtdAntigaMovida;
+            } else {
+                estoque[idxEstoque].quantidade = qtdAtualNoEstoque + qtdAntigaMovida;
+            }
         }
     }
 
+    // 2. Aplica a nova movimentação
     if (idxEstoque !== -1) {
-        if (tipo === "Entrada") estoque[idxEstoque].quantidade += qtdNova;
-        else {
-            if (estoque[idxEstoque].quantidade < qtdNova) {
-                alert("Saldo insuficiente!");
+        let saldoAtualizado = Number(estoque[idxEstoque].quantidade);
+
+        if (tipo === "Entrada") {
+            estoque[idxEstoque].quantidade = saldoAtualizado + qtdNova;
+        } else {
+            if (saldoAtualizado < qtdNova) {
+                alert(`Saldo insuficiente! Estoque atual: ${saldoAtualizado}`);
                 return;
             }
-            estoque[idxEstoque].quantidade -= qtdNova;
+            estoque[idxEstoque].quantidade = saldoAtualizado - qtdNova;
         }
         localStorage.setItem('estoque_rj', JSON.stringify(estoque));
     }
@@ -122,16 +141,25 @@ function registrarMovimentacao(e) {
 }
 
 /**
- * Exclusão com Estorno
+ * Exclusão com Estorno Numérico
  */
 function excluirMovimentacao(index) {
     const mov = historico[index];
     if (!confirm(`Deseja excluir a movimentação de ${mov.item}? O estoque será corrigido.`)) return;
 
+    // Recarrega estoque para garantir valores reais
+    estoque = JSON.parse(localStorage.getItem('estoque_rj')) || [];
     const idxEstoque = estoque.findIndex(i => i.nome === mov.item);
+    
     if (idxEstoque !== -1) {
-        if (mov.tipo === "ENTRADA") estoque[idxEstoque].quantidade -= mov.quantidade;
-        else estoque[idxEstoque].quantidade += mov.quantidade;
+        let qtdNoEstoque = Number(estoque[idxEstoque].quantidade);
+        let qtdDaMovimentacao = Number(mov.quantidade);
+
+        if (mov.tipo === "ENTRADA") {
+            estoque[idxEstoque].quantidade = qtdNoEstoque - qtdDaMovimentacao;
+        } else {
+            estoque[idxEstoque].quantidade = qtdNoEstoque + qtdDaMovimentacao;
+        }
         localStorage.setItem('estoque_rj', JSON.stringify(estoque));
     }
 
@@ -140,31 +168,25 @@ function excluirMovimentacao(index) {
     renderizarMovimentacoes();
 }
 
-function prepararEdicaoMov(index) {
-    indexEdicao = index;
-    const mov = historico[index];
-    abrirModalMov();
-    document.getElementById('tipoMov').value = mov.tipo === 'ENTRADA' ? 'Entrada' : 'Saída';
-    document.getElementById('itemMov').value = mov.item;
-    document.getElementById('qtdMov').value = mov.quantidade;
-    document.getElementById('obsMov').value = mov.observacao || '';
-    toggleCliente();
-    if (mov.tipo === 'SAÍDA') document.getElementById('clienteMov').value = mov.cliente;
-    document.querySelector('#modalMovimentacao h2').innerText = "Editar Movimentação";
-}
-
-function toggleCliente() {
-    const tipo = document.getElementById('tipoMov').value;
-    const groupCliente = document.getElementById('groupCliente');
-    if (groupCliente) groupCliente.style.display = tipo === 'Saída' ? 'block' : 'none';
-}
-
+/**
+ * Funções Seguras para Modal e Interface
+ */
 function abrirModalMov() {
+    // Sincroniza dados antes de abrir para popular os selects corretamente
+    estoque = JSON.parse(localStorage.getItem('estoque_rj')) || [];
+    clientes = JSON.parse(localStorage.getItem('clientes_rj')) || [];
+
     const selectItem = document.getElementById('itemMov');
     const selectCliente = document.getElementById('clienteMov');
-    if (estoque.length === 0) { alert("Cadastre itens primeiro."); return; }
+    
+    if (estoque.length === 0) { 
+        alert("Cadastre itens no estoque antes de realizar movimentações."); 
+        return; 
+    }
+
     selectItem.innerHTML = '<option value="" disabled selected>Selecione...</option>' + 
         estoque.map(item => `<option value="${item.nome}">${item.nome}</option>`).join('');
+    
     if (selectCliente) {
         selectCliente.innerHTML = '<option value="" disabled selected>Selecione o cliente...</option>' + 
             clientes.map(c => `<option value="${c.nome}">${c.nome}</option>`).join('');
@@ -178,6 +200,27 @@ function fecharModalMov() {
     document.querySelector('#modalMovimentacao h2').innerText = "Nova Movimentação";
     indexEdicao = null;
     if (document.getElementById('groupCliente')) document.getElementById('groupCliente').style.display = 'none';
+}
+
+function prepararEdicaoMov(index) {
+    indexEdicao = index;
+    const mov = historico[index];
+    abrirModalMov();
+    document.getElementById('tipoMov').value = mov.tipo === 'ENTRADA' ? 'Entrada' : 'Saída';
+    document.getElementById('itemMov').value = mov.item;
+    document.getElementById('qtdMov').value = mov.quantidade;
+    document.getElementById('obsMov').value = mov.observacao || '';
+    toggleCliente();
+    if (mov.tipo === 'SAÍDA' && document.getElementById('clienteMov')) {
+        document.getElementById('clienteMov').value = mov.cliente;
+    }
+    document.querySelector('#modalMovimentacao h2').innerText = "Editar Movimentação";
+}
+
+function toggleCliente() {
+    const tipo = document.getElementById('tipoMov').value;
+    const groupCliente = document.getElementById('groupCliente');
+    if (groupCliente) groupCliente.style.display = tipo === 'Saída' ? 'block' : 'none';
 }
 
 function verDetalhes(index) {
@@ -200,7 +243,9 @@ function verDetalhes(index) {
     if (modal) modal.style.display = 'flex';
 }
 
-function fecharModalDetalhes() { document.getElementById('modalDetalhes').style.display = 'none'; }
+function fecharModalDetalhes() { 
+    document.getElementById('modalDetalhes').style.display = 'none'; 
+}
 
 // Inicialização
 renderizarMovimentacoes();
