@@ -42,13 +42,11 @@ function renderizarTabela(dadosParaExibir = null) {
                 </td>
                 <td style="color: #64748b;">${item.localizacao || '-'}</td>
                 <td>
-                    <div style="display: flex; gap: 10px;">
-                        <button onclick="prepararEdicao(${realIndex})" style="background: none; border: 1px solid #cbd5e1; color: #64748b; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">
-                            Editar
-                        </button>
-                        <button onclick="remover(${realIndex})" style="background: #fee2e2; border: 1px solid #fecaca; color: #dc2626; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">
-                            Excluir
-                        </button>
+                    <div style="display: flex; gap: 8px;">
+                        <button onclick="movimentarEstoque(${realIndex}, 'entrada')" style="background: #dcfce7; border: 1px solid #bbf7d0; color: #166534; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">➕ Entrada</button>
+                        <button onclick="movimentarEstoque(${realIndex}, 'saida')" style="background: #fee2e2; border: 1px solid #fecaca; color: #991b1b; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">➖ Baixa</button>
+                        <button onclick="prepararEdicao(${realIndex})" style="background: none; border: 1px solid #cbd5e1; color: #64748b; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">Editar</button>
+                        <button onclick="remover(${realIndex})" style="background: none; border: 1px solid #fecaca; color: #dc2626; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">Excluir</button>
                     </div>
                 </td>
             </tr>
@@ -60,7 +58,7 @@ function renderizarTabela(dadosParaExibir = null) {
  * Função de busca
  */
 function filtrarEstoque() {
-    const inputBusca = document.getElementById('buscaEstoque');
+    const inputBusca = document.getElementById('searchInput');
     if (!inputBusca) return;
 
     const termo = inputBusca.value.toLowerCase();
@@ -165,7 +163,7 @@ function salvarItem(event) {
     localStorage.setItem('estoque_rj', JSON.stringify(estoque));
 
     // Limpa a busca e atualiza a tela
-    const busca = document.getElementById('buscaEstoque');
+    const busca = document.getElementById('searchInput');
     if (busca) busca.value = ''; 
     
     renderizarTabela();
@@ -185,3 +183,39 @@ function remover(index) {
 document.addEventListener('DOMContentLoaded', () => {
     renderizarTabela();
 });
+
+// Atualiza o saldo do item no estoque e gera um registro automático no histórico de movimentações
+function movimentarEstoque(index, tipo) {
+    estoque = JSON.parse(localStorage.getItem('estoque_rj')) || [];
+    const item = estoque[index];
+
+    const acao = tipo === 'entrada' ? 'Adicionar ao' : 'Retirar do';
+    const qtdInput = prompt(`${acao} estoque de ${item.nome}:\nDigite a quantidade:`);
+
+    if (!qtdInput || isNaN(qtdInput) || Number(qtdInput) <= 0) return;
+    const qtd = Number(qtdInput);
+
+    if (tipo === 'saida' && qtd > item.quantidade) {
+        alert(`Erro: Você só tem ${item.quantidade} em estoque.`);
+        return;
+    }
+
+    if (tipo === 'entrada') item.quantidade += qtd;
+    else item.quantidade -= qtd;
+
+    const log = {
+        data: new Date().toLocaleString('pt-BR'),
+        item: item.nome,
+        tipo: tipo === 'entrada' ? 'ENTRADA' : 'SAÍDA',
+        quantidade: qtd,
+        usuario: 'Talita Marques'
+    };
+    
+    let historico = JSON.parse(localStorage.getItem('historico_rj')) || [];
+    historico.push(log);
+    
+    localStorage.setItem('historico_rj', JSON.stringify(historico));
+    localStorage.setItem('estoque_rj', JSON.stringify(estoque));
+    
+    renderizarTabela();
+}
