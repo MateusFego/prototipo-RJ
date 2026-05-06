@@ -85,21 +85,29 @@ body {
 
 .inventory-header h2 { font-size: 1.25rem; font-weight: 700; color: #1e293b; }
 
-/* --- BOTÕES E FILTROS --- */
-.btn-add {
-    background: #2563eb;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s;
+
+/* --- BARRA DE AÇÕES E FILTROS --- */
+.action-bar {
+    display: flex;
+    flex-direction: column; 
+    align-items: flex-start; 
+    margin-bottom: 20px;
+    gap: 12px; 
 }
 
-.btn-add:hover { background: #1d4ed8; }
+.search-box {
+    width: 100%;
+    max-width: 600px; /* Se achar pequena, mude para 700px ou 800px aqui! */
+    padding: 10px 15px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.875rem;
+}
 
-.filters-container { display: flex; gap: 8px; margin-bottom: 20px; }
+.filters-container { 
+    display: flex; 
+    gap: 8px; 
+}
 
 .btn-filter {
     padding: 8px 16px;
