@@ -1,0 +1,122 @@
+/* login.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background-color: #f8fafc; /* Cinza azulado bem leve */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-container {
+    background: #ffffff;
+    padding: 2.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    border: 1px solid #e2e8f0;
+}
+
+.logo {
+    width: 90px;
+    height: auto;
+    margin-bottom: 1.5rem;
+    border-radius: 0.5rem;
+}
+
+h1 {
+    font-size: 1.5rem;
+    color: #1e293b;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+p {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin-bottom: 2rem;
+}
+
+.input-group {
+    text-align: left;
+    margin-bottom: 1.25rem;
+}
+
+.input-group label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+    background-color: #f1f5f9;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #2563eb;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+.btn-entrar {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: 0.5rem;
+}
+
+.btn-entrar:hover {
+    background-color: #1d4ed8;
+}
+
+.nota-info {
+    margin-top: 2rem;
+    padding: 1rem;
+    background-color: #f0f9ff;
+    border-radius: 0.5rem;
+    border: 1px solid #e0f2fe;
+}
+
+.nota-info p {
+    margin-bottom: 0;
+    font-size: 0.75rem;
+    color: #0369a1;
+    line-height: 1.25rem;
+}
+.tab-item {
+    cursor: pointer; /* Faz aparecer a "mãozinha" do mouse */
+    user-select: none; /* Impede de ficar selecionando o texto sem querer */
+}
+
+.tab-item:hover {
+    color: #2563eb; /* Muda a cor ao passar o mouse */
+    background-color: #f8fafc; /* Dá um destaque leve */
+}
